@@ -1,0 +1,62 @@
+name: TouchGrass
+options:
+  bundleIdPrefix: com.pop
+  deploymentTarget:
+    iOS: "16.4"
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+targets:
+  TouchGrass:
+    type: application
+    platform: iOS
+    sources:
+      - path: TouchGrass
+      - path: Shared
+    entitlements:
+      path: TouchGrass/TouchGrass.entitlements
+    info:
+      path: TouchGrass/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass
+        INFOPLIST_FILE: TouchGrass/Info.plist
+        GENERATE_INFOPLIST_FILE: false
+    dependencies:
+      - target: TouchGrassMonitor
+      - target: TouchGrassWidgets
+
+  TouchGrassMonitor:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TouchGrassMonitor
+      - path: Shared
+    entitlements:
+      path: TouchGrassMonitor/TouchGrassMonitor.entitlements
+    info:
+      path: TouchGrassMonitor/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass.monitor
+        INFOPLIST_FILE: TouchGrassMonitor/Info.plist
+        GENERATE_INFOPLIST_FILE: false
+
+  TouchGrassWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TouchGrassWidgets
+      - path: Shared
+    info:
+      path: TouchGrassWidgets/Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass.widgets
+        INFOPLIST_FILE: TouchGrassWidgets/Info.plist
+        GENERATE_INFOPLIST_FILE: false
