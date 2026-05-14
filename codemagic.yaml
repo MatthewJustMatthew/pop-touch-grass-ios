@@ -7,10 +7,7 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier:
-          - com.pop.touchgrass
-          - com.pop.touchgrass.monitor
-          - com.pop.touchgrass.widgets
+        bundle_identifier: com.pop.touchgrass
       xcode: latest
 
     triggering:
