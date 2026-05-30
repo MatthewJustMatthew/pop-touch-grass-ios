@@ -4,12 +4,9 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 30
 
-    integrations:
-      app_store_connect: Codemagic
-
     environment:
       ios_signing:
-        distribution_type: app_store
+        distribution_type: development
         bundle_identifier: com.pop.touchgrass
       xcode: latest
 
@@ -32,32 +29,9 @@ workflows:
             -project TouchGrass.xcodeproj \
             -scheme TouchGrass \
             -sdk iphoneos \
-            -configuration Release \
+            -configuration Debug \
             -destination 'generic/platform=iOS' \
-            CODE_SIGN_IDENTITY="iPhone Distribution"
-
-      - name: Archive
-        script: |
-          xcodebuild archive \
-            -project TouchGrass.xcodeproj \
-            -scheme TouchGrass \
-            -sdk iphoneos \
-            -configuration Release \
-            -archivePath build/TouchGrass.xcarchive \
-            CODE_SIGN_IDENTITY="iPhone Distribution"
-
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath build/TouchGrass.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
+            | xcpretty
 
     artifacts:
-      - build/ipa/*.ipa
       - build/TouchGrass.xcarchive
-
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
