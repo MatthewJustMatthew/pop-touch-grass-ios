@@ -3,7 +3,7 @@ import Foundation
 /// Constants shared across the main app and all extensions via App Group.
 enum SharedConstants {
     /// App Group identifier — must match in all targets' entitlements
-    static let appGroupID = "group.pop.touchgrass.2026"
+    static let appGroupID = "group.pop.touchgrass.2026.app"
 
     /// URL scheme for deep linking
     static let urlScheme = "touchgrass"
