@@ -17,7 +17,17 @@ workflows:
         - pattern: main
 
     scripts:
-      - name: Fetch signing files
+      - name: Set up keychain
+        script: keychain initialize
+
+      - name: Create development certificate
+        script: |
+          app-store-connect certificates create \
+            --type IOS_DEVELOPMENT \
+            --save
+          keychain add-certificates
+
+      - name: Fetch signing profiles
         script: |
           app-store-connect fetch-signing-files "com.pop.touchgrass" \
             --type IOS_APP_DEVELOPMENT \
@@ -29,18 +39,7 @@ workflows:
             --type IOS_APP_DEVELOPMENT \
             --create
 
-      - name: Set up keychain
-        script: |
-          keychain initialize
-          app-store-connect certificates list \
-            --type IOS_DEVELOPMENT \
-            --save || \
-          app-store-connect certificates create \
-            --type IOS_DEVELOPMENT \
-            --save
-          keychain add-certificates
-
-      - name: Apply profiles to Xcode
+      - name: Apply profiles
         script: xcode-project use-profiles
 
       - name: Install XcodeGen
