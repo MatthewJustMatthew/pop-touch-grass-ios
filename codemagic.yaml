@@ -8,9 +8,6 @@ workflows:
       app_store_connect: CodeMagic
 
     environment:
-      ios_signing:
-        distribution_type: development
-        bundle_identifier: com.pop.touchgrass
       xcode: latest
 
     triggering:
@@ -20,6 +17,32 @@ workflows:
         - pattern: main
 
     scripts:
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "com.pop.touchgrass" \
+            --type IOS_APP_DEVELOPMENT \
+            --create
+          app-store-connect fetch-signing-files "com.pop.touchgrass.monitor" \
+            --type IOS_APP_DEVELOPMENT \
+            --create
+          app-store-connect fetch-signing-files "com.pop.touchgrass.widgets" \
+            --type IOS_APP_DEVELOPMENT \
+            --create
+
+      - name: Set up keychain
+        script: |
+          keychain initialize
+          app-store-connect certificates list \
+            --type IOS_DEVELOPMENT \
+            --save || \
+          app-store-connect certificates create \
+            --type IOS_DEVELOPMENT \
+            --save
+          keychain add-certificates
+
+      - name: Apply profiles to Xcode
+        script: xcode-project use-profiles
+
       - name: Install XcodeGen
         script: brew install xcodegen
 
