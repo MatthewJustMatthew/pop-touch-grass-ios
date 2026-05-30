@@ -4,13 +4,13 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 30
 
+    integrations:
+      app_store_connect: Codemagic
+
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier:
-          - com.pop.touchgrass
-          - com.pop.touchgrass.monitor
-          - com.pop.touchgrass.widgets
+        bundle_identifier: com.pop.touchgrass
       xcode: latest
 
     triggering:
