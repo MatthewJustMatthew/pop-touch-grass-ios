@@ -6,9 +6,5 @@
     <array>
         <string>group.pop.touchgrass.2026.app</string>
     </array>
-    <key>com.apple.developer.family-controls</key>
-    <array>
-        <string>com.apple.developer.family-controls.app</string>
-    </array>
 </dict>
 </plist>

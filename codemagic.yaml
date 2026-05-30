@@ -7,7 +7,10 @@ workflows:
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.pop.touchgrass
+        bundle_identifier:
+          - com.pop.touchgrass
+          - com.pop.touchgrass.monitor
+          - com.pop.touchgrass.widgets
       xcode: latest
 
     triggering:
@@ -43,5 +46,18 @@ workflows:
             -archivePath build/TouchGrass.xcarchive \
             CODE_SIGN_IDENTITY="iPhone Distribution"
 
+      - name: Export IPA
+        script: |
+          xcodebuild -exportArchive \
+            -archivePath build/TouchGrass.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist exportOptions.plist
+
     artifacts:
+      - build/ipa/*.ipa
       - build/TouchGrass.xcarchive
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true

@@ -1,4 +1,8 @@
 import Foundation
+import UserNotifications
+
+// MARK: - FamilyControls available (real device with entitlement)
+#if canImport(FamilyControls)
 import FamilyControls
 import DeviceActivity
 
@@ -122,3 +126,33 @@ class ScreenTimeManager: ObservableObject {
         defaults.set(false, forKey: SharedConstants.Keys.monitoringEnabled)
     }
 }
+
+#else
+
+// MARK: - Stub for builds without FamilyControls entitlement
+
+/// Stub ScreenTimeManager that compiles without FamilyControls.
+/// All Screen Time features are no-ops until the entitlement is granted.
+@MainActor
+class ScreenTimeManager: ObservableObject {
+    static let shared = ScreenTimeManager()
+
+    @Published var authorizationStatus: AuthorizationStatus = .notDetermined
+
+    enum AuthorizationStatus {
+        case notDetermined, approved, denied
+    }
+
+    func requestAuthorization() async {
+        print("[STUB] FamilyControls not available — skipping authorization")
+        authorizationStatus = .denied
+    }
+
+    func loadSelection() {}
+    func startMonitoring() {
+        print("[STUB] FamilyControls not available — monitoring disabled")
+    }
+    func stopMonitoring() {}
+}
+
+#endif

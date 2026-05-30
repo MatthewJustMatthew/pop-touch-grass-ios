@@ -1,5 +1,8 @@
 import SwiftUI
+
+#if canImport(FamilyControls)
 import FamilyControls
+#endif
 
 /// Main dashboard shown after onboarding is complete.
 /// Displays user intention, monitoring controls, and app selection.
@@ -29,7 +32,11 @@ struct HomeView: View {
                         frequencyCard
 
                         // App selection
+                        #if canImport(FamilyControls)
                         appSelectionCard
+                        #else
+                        appSelectionStubCard
+                        #endif
 
                         // Reaffirm intention
                         Button(action: {
@@ -56,16 +63,20 @@ struct HomeView: View {
             .navigationTitle("Touch Grass")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            #if canImport(FamilyControls)
             .sheet(isPresented: $showAppPicker) {
                 FamilyActivityPicker(selection: $screenTime.selectedApps)
                     .onChange(of: screenTime.selectedApps) { newSelection in
                         screenTime.saveSelection(newSelection)
                     }
             }
+            #endif
         }
         .preferredColorScheme(.dark)
         .onAppear {
+            #if canImport(FamilyControls)
             screenTime.loadSelection()
+            #endif
         }
     }
 
@@ -176,6 +187,7 @@ struct HomeView: View {
         )
     }
 
+    #if canImport(FamilyControls)
     private var appSelectionCard: some View {
         VStack(spacing: 16) {
             HStack {
@@ -193,6 +205,29 @@ struct HomeView: View {
             let count = screenTime.selectedApps.applicationTokens.count +
                         screenTime.selectedApps.categoryTokens.count
             Text(count > 0 ? "\(count) app\(count == 1 ? "" : "s") selected" : "No apps selected")
+                .font(.system(size: 14))
+                .foregroundColor(.white.opacity(0.5))
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white.opacity(0.05))
+        )
+    }
+    #endif
+
+    /// Stub card shown when FamilyControls is not available
+    private var appSelectionStubCard: some View {
+        VStack(spacing: 16) {
+            HStack {
+                Text("Monitored Apps")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.white)
+                Spacer()
+            }
+
+            Text("App selection will be available once FamilyControls entitlement is approved.")
                 .font(.system(size: 14))
                 .foregroundColor(.white.opacity(0.5))
                 .frame(maxWidth: .infinity, alignment: .leading)

@@ -1,3 +1,4 @@
+#if canImport(DeviceActivity)
 import DeviceActivity
 import UserNotifications
 import Foundation
@@ -84,3 +85,15 @@ class TouchGrassMonitor: DeviceActivityMonitor {
         defaults.set(count + 1, forKey: SharedConstants.Keys.nudgeCount)
     }
 }
+
+#else
+
+import Foundation
+
+/// Stub monitor for builds without DeviceActivity framework.
+/// This extension target won't function without FamilyControls, but it needs to compile.
+class TouchGrassMonitor: NSObject {
+    // No-op stub — DeviceActivity not available
+}
+
+#endif

@@ -1,5 +1,8 @@
 import SwiftUI
+
+#if canImport(FamilyControls)
 import FamilyControls
+#endif
 
 /// First-launch onboarding ritual, ported from Android's RitualActivity.
 /// Flow: intro → pop bubble → awareness question → intention → setup Screen Time
