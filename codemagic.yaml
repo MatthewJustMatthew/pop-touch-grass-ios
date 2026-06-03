@@ -23,31 +23,6 @@ workflows:
       - name: Generate Xcode project
         script: xcodegen generate
 
-      - name: Set up keychain
-        script: |
-          # Generate a fresh RSA private key
-          openssl genrsa -out /tmp/cert_key.pem 2048
-
-          # Initialize keychain
-          keychain initialize
-
-          # Fetch App Store distribution certs and profiles
-          app-store-connect fetch-signing-files "com.pop.touchgrass" \
-            --type IOS_APP_STORE \
-            --create \
-            --certificate-key /tmp/cert_key.pem
-          app-store-connect fetch-signing-files "com.pop.touchgrass.monitor" \
-            --type IOS_APP_STORE \
-            --create \
-            --certificate-key /tmp/cert_key.pem
-          app-store-connect fetch-signing-files "com.pop.touchgrass.widgets" \
-            --type IOS_APP_STORE \
-            --create \
-            --certificate-key /tmp/cert_key.pem
-
-          # Add certs to keychain
-          keychain add-certificates
-
       - name: Archive
         script: |
           xcodebuild archive \
