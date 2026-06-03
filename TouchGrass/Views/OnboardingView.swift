@@ -86,7 +86,7 @@ struct OnboardingView: View {
                         .font(.system(size: 20, weight: .light, design: .serif))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .textInputAutocorrection(.no)
+                        .disableAutocorrection(true)
 
                     Rectangle()
                         .fill(Color.white.opacity(0.3))
@@ -146,7 +146,7 @@ struct OnboardingView: View {
                         .font(.system(size: 20, weight: .light, design: .serif))
                         .foregroundColor(.white)
                         .multilineTextAlignment(.center)
-                        .textInputAutocorrection(.no)
+                        .disableAutocorrection(true)
 
                     Rectangle()
                         .fill(Color.white.opacity(0.3))
