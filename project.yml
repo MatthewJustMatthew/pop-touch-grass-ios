@@ -47,8 +47,9 @@ targets:
     info:
       path: TouchGrassMonitor/Info.plist
       properties:
+        CFBundleDisplayName: TouchGrassMonitor
         NSExtension:
-          NSExtensionPointIdentifier: com.apple.deviceactivitymonitor
+          NSExtensionPointIdentifier: com.apple.deviceactivity.monitor-extension
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).TouchGrassMonitor
     settings:
       base:
@@ -65,6 +66,7 @@ targets:
     info:
       path: TouchGrassWidgets/Info.plist
       properties:
+        CFBundleDisplayName: TouchGrassWidgets
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
