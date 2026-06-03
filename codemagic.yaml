@@ -17,6 +17,12 @@ workflows:
         - pattern: main
 
     scripts:
+      - name: Install XcodeGen
+        script: brew install xcodegen
+
+      - name: Generate Xcode project
+        script: xcodegen generate
+
       - name: Set up code signing
         script: |
           # Generate a fresh RSA private key
@@ -39,15 +45,9 @@ workflows:
             --create \
             --certificate-key /tmp/cert_key.pem
 
-          # Add certs to keychain and apply
+          # Add certs to keychain and apply profiles to the generated project
           keychain add-certificates
           xcode-project use-profiles
-
-      - name: Install XcodeGen
-        script: brew install xcodegen
-
-      - name: Generate Xcode project
-        script: xcodegen generate
 
       - name: Build
         script: |
