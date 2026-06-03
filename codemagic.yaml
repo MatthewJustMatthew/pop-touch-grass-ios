@@ -23,7 +23,7 @@ workflows:
       - name: Generate Xcode project
         script: xcodegen generate
 
-      - name: Set up code signing
+      - name: Set up keychain
         script: |
           # Generate a fresh RSA private key
           openssl genrsa -out /tmp/cert_key.pem 2048
@@ -31,7 +31,7 @@ workflows:
           # Initialize keychain
           keychain initialize
 
-          # Fetch/create App Store profiles and certificates
+          # Fetch App Store distribution certs and profiles
           app-store-connect fetch-signing-files "com.pop.touchgrass" \
             --type IOS_APP_STORE \
             --create \
@@ -48,13 +48,6 @@ workflows:
           # Add certs to keychain
           keychain add-certificates
 
-          # Apply profiles to the generated Xcode project
-          xcode-project use-profiles --project TouchGrass.xcodeproj
-
-          # Debug: verify profiles were applied
-          echo "=== Checking signing settings ==="
-          xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -showBuildSettings | grep -E "PROVISIONING_PROFILE|CODE_SIGN|DEVELOPMENT_TEAM" | head -20
-
       - name: Archive
         script: |
           xcodebuild archive \
@@ -63,6 +56,10 @@ workflows:
             -sdk iphoneos \
             -configuration Release \
             -archivePath build/TouchGrass.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM=QL8TU9W7QA
 
@@ -71,7 +68,11 @@ workflows:
           xcodebuild -exportArchive \
             -archivePath build/TouchGrass.xcarchive \
             -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist
+            -exportOptionsPlist exportOptions.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$APP_STORE_CONNECT_PRIVATE_KEY" \
+            -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
 
     artifacts:
       - build/ipa/*.ipa
