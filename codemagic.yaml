@@ -8,6 +8,14 @@ workflows:
       app_store_connect: CodeMagic
 
     environment:
+      groups:
+        - github_credentials
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier:
+          - com.pop.touchgrass
+          - com.pop.touchgrass.monitor
+          - com.pop.touchgrass.widgets
       xcode: latest
 
     triggering:
@@ -17,6 +25,14 @@ workflows:
         - pattern: main
 
     scripts:
+      - name: Check GitHub token
+        script: |
+          if [ -z "$GITHUB_TOKEN" ]; then
+            echo "GITHUB_TOKEN is not set"
+            exit 1
+          fi
+          echo "GITHUB_TOKEN is set"
+
       - name: Install XcodeGen
         script: brew install xcodegen
 
@@ -40,7 +56,8 @@ workflows:
             -authenticationKeyID "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=QL8TU9W7QA
+            DEVELOPMENT_TEAM=QL8TU9W7QA \
+            CODE_SIGN_IDENTITY="Apple Distribution"
 
       - name: Export IPA
         script: |
