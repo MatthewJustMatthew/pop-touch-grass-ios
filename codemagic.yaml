@@ -45,19 +45,15 @@ workflows:
             --create \
             --certificate-key /tmp/cert_key.pem
 
-          # Add certs to keychain and apply profiles to the generated project
+          # Add certs to keychain
           keychain add-certificates
-          xcode-project use-profiles
 
-      - name: Build
-        script: |
-          xcodebuild build \
-            -project TouchGrass.xcodeproj \
-            -scheme TouchGrass \
-            -sdk iphoneos \
-            -configuration Release \
-            -destination 'generic/platform=iOS' \
-            | xcpretty
+          # Apply profiles to the generated Xcode project
+          xcode-project use-profiles --project TouchGrass.xcodeproj
+
+          # Debug: verify profiles were applied
+          echo "=== Checking signing settings ==="
+          xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -showBuildSettings | grep -E "PROVISIONING_PROFILE|CODE_SIGN|DEVELOPMENT_TEAM" | head -20
 
       - name: Archive
         script: |
@@ -66,7 +62,9 @@ workflows:
             -scheme TouchGrass \
             -sdk iphoneos \
             -configuration Release \
-            -archivePath build/TouchGrass.xcarchive
+            -archivePath build/TouchGrass.xcarchive \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=QL8TU9W7QA
 
       - name: Export IPA
         script: |
