@@ -23,13 +23,30 @@ workflows:
       - name: Generate Xcode project
         script: xcodegen generate
 
-      - name: Save API key to file
+      - name: Debug and save API key
         script: |
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/AuthKey.p8
-          echo "Key file created at /tmp/AuthKey.p8"
-          echo "Key ID: $APP_STORE_CONNECT_KEY_IDENTIFIER"
-          echo "Issuer ID: $APP_STORE_CONNECT_ISSUER_ID"
+          # Check if the variable is a file path or content
+          echo "=== Variable starts with ==="
+          echo "$APP_STORE_CONNECT_PRIVATE_KEY" | head -c 100
+          echo ""
+          echo "=== Is it a file path? ==="
+          if [ -f "$APP_STORE_CONNECT_PRIVATE_KEY" ]; then
+            echo "YES - it's a file path: $APP_STORE_CONNECT_PRIVATE_KEY"
+            cp "$APP_STORE_CONNECT_PRIVATE_KEY" /tmp/AuthKey.p8
+          else
+            echo "NO - it's key content"
+            # Use cat with heredoc to preserve exact content
+            cat > /tmp/AuthKey.p8 << KEYEOF
+          $APP_STORE_CONNECT_PRIVATE_KEY
+          KEYEOF
+          fi
+          echo "=== Key file info ==="
           ls -la /tmp/AuthKey.p8
+          wc -l /tmp/AuthKey.p8
+          head -1 /tmp/AuthKey.p8
+          tail -1 /tmp/AuthKey.p8
+          echo "=== Key ID: $APP_STORE_CONNECT_KEY_IDENTIFIER ==="
+          echo "=== Issuer ID: $APP_STORE_CONNECT_ISSUER_ID ==="
 
       - name: Archive
         script: |
