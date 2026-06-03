@@ -19,6 +19,7 @@ targets:
     sources:
       - path: TouchGrass
       - path: Shared
+      - path: TouchGrass/Assets.xcassets
     entitlements:
       path: TouchGrass/TouchGrass.entitlements
     info:
@@ -28,6 +29,9 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass
         INFOPLIST_FILE: TouchGrass/Info.plist
         GENERATE_INFOPLIST_FILE: false
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        TARGETED_DEVICE_FAMILY: "1"
     dependencies:
       - target: TouchGrassMonitor
       - target: TouchGrassWidgets
@@ -42,6 +46,10 @@ targets:
       path: TouchGrassMonitor/TouchGrassMonitor.entitlements
     info:
       path: TouchGrassMonitor/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivitymonitor
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).TouchGrassMonitor
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass.monitor
@@ -56,6 +64,9 @@ targets:
       - path: Shared
     info:
       path: TouchGrassWidgets/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass.widgets
