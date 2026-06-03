@@ -36,6 +36,9 @@ workflows:
       - name: Generate Xcode project
         script: xcodegen generate
 
+      - name: Apply provisioning profiles
+        script: xcode-project use-profiles
+
       - name: Archive
         script: |
           # Extract actual file path from @file: prefix
