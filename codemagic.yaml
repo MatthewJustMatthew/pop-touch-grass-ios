@@ -37,8 +37,7 @@ workflows:
         script: xcodegen generate
 
       - name: Apply provisioning profiles
-        script: |
-          xcode-project use-profiles --custom-export-options='{"testFlightInternalTestingOnly": true}'
+        script: xcode-project use-profiles
 
       - name: Archive
         script: |
@@ -79,4 +78,3 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_testflight: true
-        submit_to_app_store: false
