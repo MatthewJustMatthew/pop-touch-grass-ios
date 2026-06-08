@@ -151,7 +151,7 @@ struct HomeView: View {
 
             // User intention — mint green italic, matches Android #A8E6CF
             if !settings.userIntention.isEmpty {
-                Text(""\(settings.userIntention)"")
+                Text("\u{201C}\(settings.userIntention)\u{201D}")
                     .font(.system(size: 18, weight: .regular, design: .serif))
                     .italic()
                     .foregroundColor(mint)
