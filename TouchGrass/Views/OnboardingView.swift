@@ -18,7 +18,10 @@ struct OnboardingView: View {
     var body: some View {
         ZStack {
             // Dark background
-            Color(red: 0.04, green: 0.02, blue: 0.08)
+            Image("ForestBackground")
+                .resizable()
+                .scaledToFill()
+                .overlay(Color(red: 0.04, green: 0.02, blue: 0.08).opacity(0.62))
                 .ignoresSafeArea()
 
             Group {

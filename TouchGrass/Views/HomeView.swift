@@ -101,15 +101,10 @@ struct HomeView: View {
     private var forestBackground: some View {
         ZStack {
             // Deep forest gradient — approximates the enchanted forest photo + dark overlay
-            LinearGradient(
-                stops: [
-                    .init(color: Color(red: 0.04, green: 0.10, blue: 0.06), location: 0.0),
-                    .init(color: Color(red: 0.03, green: 0.07, blue: 0.04), location: 0.4),
-                    .init(color: Color(red: 0.02, green: 0.05, blue: 0.05), location: 1.0),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+            Image("ForestBackground")
+                .resizable()
+                .scaledToFill()
+                .overlay(Color.black.opacity(0.38))
 
             // Subtle vignette — mimics the dark overlay on the Android photo
             RadialGradient(
