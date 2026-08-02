@@ -100,11 +100,15 @@ struct HomeView: View {
 
     private var forestBackground: some View {
         ZStack {
-            // Deep forest gradient — approximates the enchanted forest photo + dark overlay
-            Image("ForestBackground")
-                .resizable()
-                .scaledToFill()
-                .overlay(Color.black.opacity(0.38))
+            // Enchanted forest photo — explicitly framed to full screen on any device
+            GeometryReader { geo in
+                Image("ForestBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
+            .overlay(Color.black.opacity(0.38))
 
             // Subtle vignette — mimics the dark overlay on the Android photo
             RadialGradient(

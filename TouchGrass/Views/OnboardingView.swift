@@ -17,12 +17,16 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            // Dark background
-            Image("ForestBackground")
-                .resizable()
-                .scaledToFill()
-                .overlay(Color(red: 0.04, green: 0.02, blue: 0.08).opacity(0.62))
-                .ignoresSafeArea()
+            // Dark background — explicitly framed to full screen on any device
+            GeometryReader { geo in
+                Image("ForestBackground")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
+            .overlay(Color(red: 0.04, green: 0.02, blue: 0.08).opacity(0.62))
+            .ignoresSafeArea()
 
             Group {
                 switch currentStep {
