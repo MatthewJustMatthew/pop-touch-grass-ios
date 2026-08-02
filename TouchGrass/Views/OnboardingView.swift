@@ -10,6 +10,7 @@ struct OnboardingView: View {
     @EnvironmentObject private var settings: AppSettings
     @StateObject private var screenTime = ScreenTimeManager.shared
     @State private var currentStep = 1
+    @Environment(\.scenePhase) private var scenePhase
 
     // Step 3 + 5 text input
     @State private var awarenessText = ""
@@ -43,6 +44,16 @@ struct OnboardingView: View {
             .transition(.opacity.animation(.easeInOut(duration: 0.75)))
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            BackgroundAudioManager.shared.start()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                BackgroundAudioManager.shared.resume()
+            } else {
+                BackgroundAudioManager.shared.pause()
+            }
+        }
     }
 
     // MARK: - Step 1: "Social media conditions you"
@@ -209,6 +220,7 @@ struct OnboardingView: View {
 
             FadeInView(delay: 6.0) {
                 Button(action: {
+                    BackgroundAudioManager.shared.fadeOut()
                     Task {
                         await screenTime.requestAuthorization()
                         settings.ritualCompleted = true
@@ -238,6 +250,7 @@ struct OnboardingView: View {
 
             FadeInView(delay: 9.0) {
                 Button("Skip for now") {
+                    BackgroundAudioManager.shared.fadeOut()
                     settings.ritualCompleted = true
                 }
                 .font(.system(size: 14))
