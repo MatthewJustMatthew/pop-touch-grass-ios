@@ -128,10 +128,11 @@ struct HomeView: View {
 
     private var heroHeader: some View {
         VStack(spacing: 0) {
-            // App logo
-            Text("🫧")
-                .font(.system(size: 80))
-                .padding(.bottom, 16)
+            // Poppable practice bubble — replaces the static logo so the pop
+            // sound becomes familiar before it ever shows up as a nudge.
+            PracticeBubbleView(size: 150)
+                .frame(width: 150, height: 150)
+                .padding(.bottom, 4)
 
             // "POP!\nTouch Grass" — serif, centered, matches Android textSize 28sp
             Text("POP!\nTouch Grass")

@@ -23,6 +23,7 @@ final class RitualSoundPlayer {
             print("RitualSoundPlayer: \(resource).\(ext) not found in bundle")
             return
         }
+        ensurePlaybackSession()
         do {
             let p = try AVAudioPlayer(contentsOf: url)
             p.volume = 1.0
@@ -34,5 +35,16 @@ final class RitualSoundPlayer {
         } catch {
             print("RitualSoundPlayer: failed to play \(resource): \(error)")
         }
+    }
+
+    /// The ritual's ambience normally puts the session in .playback, but these sounds
+    /// also play outside the ritual (e.g. the practice bubble on the home screen),
+    /// where the default session would let the silent switch mute them.
+    /// Left alone while recording so the blow detector's session isn't torn down.
+    private func ensurePlaybackSession() {
+        let session = AVAudioSession.sharedInstance()
+        guard session.category != .playAndRecord else { return }
+        try? session.setCategory(.playback, options: .mixWithOthers)
+        try? session.setActive(true)
     }
 }
