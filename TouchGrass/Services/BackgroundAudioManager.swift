@@ -22,7 +22,7 @@ final class BackgroundAudioManager {
             return
         }
         do {
-            try AVAudioSession.sharedInstance().setCategory(.ambient, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
             let p = try AVAudioPlayer(contentsOf: url)
             p.numberOfLoops = -1

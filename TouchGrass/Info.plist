@@ -53,6 +53,8 @@
     </array>
     <key>NSSupportsLiveActivities</key>
     <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Touch Grass uses the microphone to detect when you blow out the ritual candle. Audio is analyzed on-device only and never recorded or sent anywhere.</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
 </dict>
