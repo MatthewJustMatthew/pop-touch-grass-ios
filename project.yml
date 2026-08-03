@@ -30,7 +30,6 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         TARGETED_DEVICE_FAMILY: "1"
     dependencies:
-      - target: TouchGrassMonitor
       - target: TouchGrassWidgets
 
   TouchGrassMonitor:
