@@ -7,6 +7,7 @@ import AVFoundation
 struct OnboardingView: View {
     @EnvironmentObject private var settings: AppSettings
     @State private var currentStep = 1
+    @State private var introFinished = false
     @Environment(\.scenePhase) private var scenePhase
 
     // Step 3 + 5 answers
@@ -17,41 +18,51 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            // Ritual background photo + #55000000 overlay (matches Android activity_ritual)
-            GeometryReader { geo in
-                Image("RitualBackground")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .clipped()
-            }
-            .overlay(Color.black.opacity(0.33))
-            .ignoresSafeArea()
-
-            Group {
-                switch currentStep {
-                case 1: step1View
-                case 2: step2View
-                case 3: step3View
-                case 4: step4View
-                case 5: step5View
-                case 6: step6View
-                case 7: step7Candle
-                default: EmptyView()
+            if introFinished {
+                // Ritual background photo + #55000000 overlay (matches Android activity_ritual)
+                GeometryReader { geo in
+                    Image("RitualBackground")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: geo.size.height)
+                        .clipped()
                 }
+                .overlay(Color.black.opacity(0.33))
+                .ignoresSafeArea()
+                .transition(.opacity)
+
+                Group {
+                    switch currentStep {
+                    case 1: step1View
+                    case 2: step2View
+                    case 3: step3View
+                    case 4: step4View
+                    case 5: step5View
+                    case 6: step6View
+                    case 7: step7Candle
+                    default: EmptyView()
+                    }
+                }
+                .transition(.opacity.animation(.easeInOut(duration: 0.75)))
+            } else {
+                IntroVideoView {
+                    BackgroundAudioManager.shared.start()
+                    withAnimation(.easeInOut(duration: 1.0)) {
+                        introFinished = true
+                    }
+                }
+                .transition(.opacity)
             }
-            .transition(.opacity.animation(.easeInOut(duration: 0.75)))
         }
         .preferredColorScheme(.dark)
         .ignoresSafeArea(.keyboard)
         .onAppear {
-            BackgroundAudioManager.shared.start()
             // Request mic permission upfront (mirrors Android onCreate)
             AVAudioSession.sharedInstance().requestRecordPermission { _ in }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
-                BackgroundAudioManager.shared.resume()
+                if introFinished { BackgroundAudioManager.shared.resume() }
             } else {
                 BackgroundAudioManager.shared.pause()
             }
