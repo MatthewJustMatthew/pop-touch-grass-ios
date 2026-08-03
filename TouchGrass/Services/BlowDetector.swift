@@ -11,7 +11,7 @@ import AVFoundation
 final class BlowDetector {
     private let engine = AVAudioEngine()
     private var isListening = false
-    private var sustainedBlowFrames = 0
+    private var sustainedBlowSeconds: Double = 0
 
     /// Rolling ambient noise floor, updated continuously from non-blow-like frames.
     private var noiseFloor: Float = 0.006
@@ -20,15 +20,25 @@ final class BlowDetector {
     /// Called on the main thread when a sustained blow is detected.
     var onBlow: (() -> Void)?
 
-    private let requiredFrames = 4
+    /// Android required ~300ms of sustained blow. Buffer durations differ wildly by
+    /// sample rate, so track elapsed time rather than a raw buffer count.
+    private let requiredSustainedSeconds: Double = 0.3
     /// Absolute floor a blow must clear regardless of how quiet the room is.
     private let minAbsoluteThreshold: Float = 0.05
     /// A blow must also be this many times louder than the recent ambient floor.
     private let noiseFloorMultiplier: Float = 4.0
-    private let maxCrossingRate: Float = 0.12
+
+    /// Blowing is low-frequency air noise. Android gated at a 0.12 crossing rate on an
+    /// 8kHz stream, i.e. roughly "below 480Hz" — the rate is per-sample, so the same
+    /// constant on iOS's 48kHz hardware stream would instead pass everything under
+    /// ~2.9kHz (all speech and ambience). Express the gate in Hz and derive the rate
+    /// from the real sample rate so behaviour matches Android at any rate.
+    private let blowCutoffHz: Float = 480
 
     func start() {
         guard !isListening else { return }
+        sustainedBlowSeconds = 0
+        hasCalibratedFloor = false
         do {
             let session = AVAudioSession.sharedInstance()
             // Need record capability while keeping ambience + sounds audible on speaker
@@ -64,23 +74,31 @@ final class BlowDetector {
 
         let samples = channelData[0]
 
-        // Overall amplitude (average absolute value)
+        // Overall amplitude (average absolute value) and DC offset
         var total: Float = 0
+        var sum: Float = 0
         for i in 0..<frameCount {
             total += abs(samples[i])
+            sum += samples[i]
         }
         let amplitude = total / Float(frameCount)
+        let mean = sum / Float(frameCount)
 
-        // Zero-crossing rate — low = low frequency (blow), high = speech/taps/music
+        // Zero-crossing rate — low = low frequency (blow), high = speech/taps/music.
+        // Measured around the mean: a DC-biased buffer barely crosses zero at all,
+        // which would otherwise masquerade as a perfect blow.
         var crossings = 0
         for i in 1..<frameCount {
-            let cur = samples[i]
-            let prev = samples[i - 1]
+            let cur = samples[i] - mean
+            let prev = samples[i - 1] - mean
             if (cur > 0 && prev <= 0) || (cur <= 0 && prev > 0) {
                 crossings += 1
             }
         }
         let crossingRate = Float(crossings) / Float(frameCount)
+
+        let sampleRate = Float(buffer.format.sampleRate)
+        let maxCrossingRate = sampleRate > 0 ? min(0.5, 2 * blowCutoffHz / sampleRate) : 0.12
 
         // A blow must clear an absolute floor AND be well above the room's own noise —
         // this is what rejects AC hum, traffic, or a loud room from false-triggering.
@@ -88,8 +106,8 @@ final class BlowDetector {
         let isBlowLike = amplitude > dynamicThreshold && crossingRate < maxCrossingRate
 
         if isBlowLike {
-            sustainedBlowFrames += 1
-            if sustainedBlowFrames >= requiredFrames {
+            sustainedBlowSeconds += sampleRate > 0 ? Double(frameCount) / Double(sampleRate) : 0
+            if sustainedBlowSeconds >= requiredSustainedSeconds {
                 isListening = false
                 let callback = onBlow
                 DispatchQueue.main.async {
@@ -98,7 +116,7 @@ final class BlowDetector {
                 }
             }
         } else {
-            sustainedBlowFrames = 0
+            sustainedBlowSeconds = 0
             // Only calibrate from quiet, non-blow-like frames so a slow rising blow
             // doesn't get absorbed into the floor before it's detected.
             if amplitude < minAbsoluteThreshold {
