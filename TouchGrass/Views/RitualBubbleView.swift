@@ -186,7 +186,7 @@ struct RitualBubbleView: View {
         ctx.drawLayer { layer in
             layer.fill(
                 path,
-                with: .angularGradient(
+                with: .conicGradient(
                     Gradient(colors: iridescent),
                     center: CGPoint(x: cx, y: cy),
                     angle: .degrees(shimmerPhase)
@@ -209,7 +209,7 @@ struct RitualBubbleView: View {
         ctx.drawLayer { layer in
             layer.fill(
                 path,
-                with: .angularGradient(
+                with: .conicGradient(
                     Gradient(colors: iridescent),
                     center: CGPoint(x: cx, y: cy),
                     angle: .degrees(shimmerPhase * -0.7 + 120)
