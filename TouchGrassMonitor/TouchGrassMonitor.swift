@@ -56,7 +56,7 @@ class TouchGrassMonitor: DeviceActivityMonitor {
         let content = UNMutableNotificationContent()
         content.title = nudge.title
         content.body = nudge.body
-        content.sound = UNNotificationSound(named: UNNotificationSoundName("\(nudge.sound).caf"))
+        content.sound = UNNotificationSound(named: UNNotificationSoundName(nudge.sound))
         content.categoryIdentifier = SharedConstants.Notifications.categoryID
         content.interruptionLevel = .timeSensitive
 

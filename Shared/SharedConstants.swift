@@ -28,6 +28,8 @@ enum SharedConstants {
         static let categoryID = "touchgrass.nudge.category"
         static let actionOpenApp = "OPEN_APP"
         static let actionDismiss = "DISMISS"
+        /// Prefix for the ladder of interval-scheduled nudges.
+        static let scheduledPrefix = "touchgrass.nudge.scheduled."
     }
 
     /// DeviceActivity event names
@@ -44,11 +46,12 @@ enum SharedConstants {
         case direct
     }
 
-    /// Sound file names (bundled .caf files)
+    /// Notification sound file names, including extension.
+    /// Must be PCM (wav/aiff/caf) and live in the app bundle — mp3 is not a valid
+    /// notification sound format, and a missing file silently falls back to the
+    /// default iOS alert tone.
     enum Sounds {
-        static let chimeGentle = "chime_gentle"
-        static let whistle = "whistle"
-        static let whistleEcho = "whistle_echo"
+        static let bubblePop = "pop_nudge.wav"
     }
 
     /// Shared UserDefaults suite using the App Group

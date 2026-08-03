@@ -94,6 +94,14 @@ struct HomeView: View {
             screenTime.loadSelection()
             #endif
         }
+        .onChange(of: settings.intervalSeconds) { newInterval in
+            guard settings.monitoringEnabled else { return }
+            NudgeScheduler.shared.reschedule(
+                intervalSeconds: newInterval,
+                intention: settings.userIntention,
+                awareness: settings.userAwareness
+            )
+        }
     }
 
     // MARK: - Background
@@ -169,8 +177,14 @@ struct HomeView: View {
             if settings.monitoringEnabled {
                 Task { await screenTime.requestAuthorization() }
                 screenTime.startMonitoring()
+                NudgeScheduler.shared.reschedule(
+                    intervalSeconds: settings.intervalSeconds,
+                    intention: settings.userIntention,
+                    awareness: settings.userAwareness
+                )
             } else {
                 screenTime.stopMonitoring()
+                NudgeScheduler.shared.cancelAll()
             }
         }) {
             Text(settings.monitoringEnabled
@@ -189,7 +203,7 @@ struct HomeView: View {
 
     private var statusLabel: some View {
         Text(settings.monitoringEnabled
-             ? "Active — watching for scroll time"
+             ? "Active — nudging every \(settings.intervalLabel)"
              : "Inactive")
             .font(.system(size: 12))
             .foregroundColor(Color.white.opacity(0.55))

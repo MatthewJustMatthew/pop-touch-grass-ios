@@ -16,7 +16,7 @@ struct NudgeContent {
             return (
                 title: "Touch Grass 🌿",
                 body: body,
-                sound: SharedConstants.Sounds.chimeGentle
+                sound: SharedConstants.Sounds.bubblePop
             )
 
         case .firm:
@@ -28,7 +28,7 @@ struct NudgeContent {
             return (
                 title: "Hey 👋",
                 body: body,
-                sound: SharedConstants.Sounds.whistle
+                sound: SharedConstants.Sounds.bubblePop
             )
 
         case .direct:
@@ -41,7 +41,7 @@ struct NudgeContent {
             return (
                 title: "You've been scrolling a while",
                 body: body,
-                sound: SharedConstants.Sounds.whistleEcho
+                sound: SharedConstants.Sounds.bubblePop
             )
         }
     }
