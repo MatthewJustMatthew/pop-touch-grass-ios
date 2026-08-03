@@ -22,8 +22,6 @@ targets:
       - path: TouchGrass/Assets.xcassets
     entitlements:
       path: TouchGrass/TouchGrass.entitlements
-    info:
-      path: TouchGrass/Info.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.pop.touchgrass
