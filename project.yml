@@ -31,6 +31,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
     dependencies:
       - target: TouchGrassWidgets
+      - target: TouchGrassMonitor
 
   TouchGrassMonitor:
     type: app-extension
