@@ -41,10 +41,16 @@ final class RitualSoundPlayer {
     /// also play outside the ritual (e.g. the practice bubble on the home screen),
     /// where the default session would let the silent switch mute them.
     /// Left alone while recording so the blow detector's session isn't torn down.
+    ///
+    /// Uses .duckOthers instead of .mixWithOthers so the pop takes audio focus and
+    /// briefly lowers any background music/podcast, and forces the built-in speaker
+    /// so the sound can't get routed to a quiet earpiece — both make it as loud as
+    /// possible given the file's own gain is already maximized.
     private func ensurePlaybackSession() {
         let session = AVAudioSession.sharedInstance()
         guard session.category != .playAndRecord else { return }
-        try? session.setCategory(.playback, options: .mixWithOthers)
+        try? session.setCategory(.playback, options: [.duckOthers, .defaultToSpeaker])
         try? session.setActive(true)
+        try? session.overrideOutputAudioPort(.speaker)
     }
 }

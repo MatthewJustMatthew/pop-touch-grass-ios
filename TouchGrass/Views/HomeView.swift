@@ -295,6 +295,13 @@ struct HomeView: View {
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(mint)
                 }
+                .padding(.bottom, 16)
+
+                Divider()
+                    .background(Color.white.opacity(0.08))
+                    .padding(.bottom, 14)
+
+                recommendedAppsGuide
                 #else
                 VStack(alignment: .leading, spacing: 6) {
                     Text("App selection")
@@ -309,6 +316,57 @@ struct HomeView: View {
             }
         }
     }
+
+    #if canImport(FamilyControls)
+    /// The 8 most common doomscroll apps, shown as a guide only.
+    ///
+    /// Screen Time's picker deliberately keeps app identity opaque to third-party
+    /// code — there is no API to look up "Instagram" and get back its token, so
+    /// TouchGrass cannot pre-select these for you. Tap Edit above, then find and
+    /// check each of these (plus anything else you'd like nudges for) in Apple's picker.
+    private static let recommendedApps: [(name: String, symbol: String, tint: Color)] = [
+        ("Instagram", "camera.fill", Color(red: 0.88, green: 0.19, blue: 0.42)),
+        ("TikTok", "music.note", Color.black),
+        ("YouTube", "play.rectangle.fill", Color(red: 0.92, green: 0.13, blue: 0.13)),
+        ("Facebook", "person.2.fill", Color(red: 0.09, green: 0.42, blue: 0.85)),
+        ("Pinterest", "pin.fill", Color(red: 0.75, green: 0.11, blue: 0.13)),
+        ("Tinder", "flame.fill", Color(red: 0.98, green: 0.36, blue: 0.31)),
+        ("Bumble", "circle.hexagongrid.fill", Color(red: 0.96, green: 0.79, blue: 0.20)),
+        ("Hinge", "heart.fill", Color(red: 0.98, green: 0.45, blue: 0.36)),
+    ]
+
+    private var recommendedAppsGuide: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Recommended: find & check these in the picker")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(Color.white.opacity(0.47))
+
+            let columns = [GridItem(.adaptive(minimum: 78), spacing: 10)]
+            LazyVGrid(columns: columns, alignment: .leading, spacing: 10) {
+                ForEach(Self.recommendedApps, id: \.name) { app in
+                    Button(action: { showAppPicker = true }) {
+                        VStack(spacing: 6) {
+                            Image(systemName: app.symbol)
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                                .frame(width: 40, height: 40)
+                                .background(app.tint)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            Text(app.name)
+                                .font(.system(size: 11))
+                                .foregroundColor(Color.white.opacity(0.75))
+                                .lineLimit(1)
+                        }
+                    }
+                }
+            }
+
+            Text("Have something else you doomscroll on? Tap Edit above to add it too.")
+                .font(.system(size: 11))
+                .foregroundColor(Color.white.opacity(0.4))
+        }
+    }
+    #endif
 
     // MARK: - How It Works Card
 
